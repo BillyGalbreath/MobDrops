@@ -1,0 +1,56 @@
+# Show colors in console output (and log files)
+color-logs: true
+
+# Debug output to console (and log files)
+debug-mode: false
+
+# Language file (for translations)
+language-file: lang-en.yml
+
+drops:
+  sword-of-the-gods:
+    chance: 0.001
+    item:
+      material: DIAMOND_SWORD
+      name: "&bSword of the Gods"
+      lore:
+      - "Created by the Gods for the Gods"
+      - "&7&oMassive damage, massive loot"
+      nbt: '{ench:[{id:34,lvl:10},{id:16,lvl:10},{id:21,lvl:10},{id:70,lvl:1},{id:20,lvl:2},{id:19,lvl:2}]}'
+    entities:
+    - type: ZOMBIE
+      variant: NORMAL
+      min-armor: 3
+      max-armor: 10
+    - type: ZOMBIE
+      variant: HUSK
+    - type: SKELETON
+      variant: STRAY
+      max-armor: 10
+    - type: CREEPER
+    - type: ENDER_DRAGON
+      chance: 10.0
+  iron-ingots:
+    chance: 10.0
+    amount: 16
+    item:
+      material: IRON_INGOT
+    entities:
+    - type: ZOMBIE
+    - type: CREEPER
+      chance: 20.0
+    - type: SKELETON
+  healing-potion:
+    chance: 5.0
+    amount: 2
+    item:
+      material: POTION
+      nbt: "{Potion:strong_healing}"
+    entities:
+    - type: ZOMBIE
+    - type: CREEPER
+      chance: 10.0
+    - type: SKELETON
+      chance: 15.0
+    - type: CAVE_SPIDER
+    - type: SPIDER

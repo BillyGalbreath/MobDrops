@@ -1,0 +1,4 @@
+command-no-permission: "&4You do not have permission for this command!"
+
+version: "&d{plugin} v{version}."
+reload: "&d{plugin} v{version} reloaded."
