@@ -8,6 +8,7 @@ import org.bukkit.entity.Guardian;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Villager;
@@ -27,10 +28,13 @@ public class EntityListener implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
+        if (entity instanceof Player) {
+            return; // player was killed
+        }
 
         // check if killed by player
         if (entity.getKiller() == null) {
-            return; // no special drops unless killed by player
+            return; // entity was not killed by player
         }
 
         EntityType entityType = entity.getType();
