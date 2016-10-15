@@ -61,6 +61,9 @@ public class EntityListener implements Listener {
 
         int armor = 0;
         for (ItemStack armorPiece : entity.getEquipment().getArmorContents()) {
+            if (armorPiece == null) {
+                continue;
+            }
             switch (armorPiece.getType()) {
                 case LEATHER_BOOTS:
                     armor += 1;
