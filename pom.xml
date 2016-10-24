@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.pl3x.bukkit.mobdrops</groupId>
     <artifactId>MobDrops</artifactId>
-    <version>1.0.1</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
             <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>

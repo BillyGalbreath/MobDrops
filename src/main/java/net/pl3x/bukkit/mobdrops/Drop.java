@@ -6,14 +6,16 @@ import org.bukkit.inventory.ItemStack;
 public class Drop {
     private final EntityType entityType;
     private final Object entityVariant;
+    private final Boolean hasAI;
     private final int minArmor;
     private final int maxArmor;
     private final double chance;
     private final ItemStack itemStack;
 
-    public Drop(EntityType entityType, Object entityVariant, int minArmor, int maxArmor, double chance, ItemStack itemStack) {
+    public Drop(EntityType entityType, Object entityVariant, Boolean hasAI, int minArmor, int maxArmor, double chance, ItemStack itemStack) {
         this.entityType = entityType;
         this.entityVariant = entityVariant;
+        this.hasAI = hasAI;
         this.minArmor = minArmor;
         this.maxArmor = maxArmor;
         this.chance = chance;
@@ -26,6 +28,10 @@ public class Drop {
 
     public Object getEntityVariant() {
         return entityVariant;
+    }
+
+    public Boolean hasAI() {
+        return hasAI;
     }
 
     public int getMinArmor() {

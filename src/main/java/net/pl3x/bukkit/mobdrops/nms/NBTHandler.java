@@ -6,7 +6,9 @@ import net.minecraft.server.v1_10_R1.MojangsonParseException;
 import net.minecraft.server.v1_10_R1.MojangsonParser;
 import net.pl3x.bukkit.mobdrops.Logger;
 import net.pl3x.bukkit.mobdrops.api.NBT;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
 public class NBTHandler implements NBT {
@@ -35,5 +37,14 @@ public class NBTHandler implements NBT {
             component.addSibling(new ChatComponentText(nbt[i]));
         }
         return component;
+    }
+
+    public boolean hasAI(LivingEntity entity) {
+        try {
+            Class.forName("org.spigotmc.SpigotConfig");
+            return !(((CraftLivingEntity) entity).getHandle().fromMobSpawner || !entity.hasAI());
+        } catch (ClassNotFoundException e) {
+            return entity.hasAI();
+        }
     }
 }

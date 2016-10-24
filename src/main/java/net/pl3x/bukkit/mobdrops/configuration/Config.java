@@ -101,6 +101,18 @@ public class Config {
                     }
                 }
 
+                // has-ai
+                Boolean hasAI = null;
+                Object setHasAI = map.get("has-ai");
+                if (setHasAI != null) {
+                    try {
+                        hasAI = Boolean.valueOf(setHasAI.toString());
+                    } catch (Exception e) {
+                        Logger.error("Problem loading drop! Invalid has-ai flag: " + dropSection + " -> " + entityName);
+                        continue drops;
+                    }
+                }
+
                 // calculate chance
                 double chance = masterChance;
                 Object setChance = map.get("chance");
@@ -139,7 +151,7 @@ public class Config {
 
                 // build the drop
                 Logger.debug("Registered drop: " + entityType + ", " + entityVariant + ", " + minArmor + ", " + maxArmor + ", " + chance + ", " + itemStack);
-                validDrops.add(new Drop(entityType, entityVariant, minArmor, maxArmor, chance, itemStack));
+                validDrops.add(new Drop(entityType, entityVariant, hasAI, minArmor, maxArmor, chance, itemStack));
             }
 
             // finally register the valid drops

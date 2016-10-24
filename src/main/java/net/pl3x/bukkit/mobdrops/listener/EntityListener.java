@@ -2,6 +2,7 @@ package net.pl3x.bukkit.mobdrops.listener;
 
 import net.pl3x.bukkit.mobdrops.Drop;
 import net.pl3x.bukkit.mobdrops.Logger;
+import net.pl3x.bukkit.mobdrops.MobDrops;
 import net.pl3x.bukkit.mobdrops.configuration.Config;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Guardian;
@@ -141,6 +142,11 @@ public class EntityListener implements Listener {
             }
             if (drop.getEntityVariant() != null && drop.getEntityVariant() != entityVariant) {
                 Logger.debug("Not correct variant: " + entityVariant + " != " + drop.getEntityVariant());
+                continue;
+            }
+            boolean hasAI = MobDrops.getPlugin().getNBTHandler().hasAI(entity);
+            if (drop.hasAI() != null && drop.hasAI() != hasAI) {
+                Logger.debug("Entity hasAI mismatch: " + drop.hasAI() + " != " + hasAI);
                 continue;
             }
             if (armor < drop.getMinArmor()) {
