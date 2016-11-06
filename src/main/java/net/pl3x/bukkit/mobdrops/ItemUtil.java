@@ -19,8 +19,7 @@ public class ItemUtil {
             return null;
         }
 
-        ItemStack itemStack = new ItemStack(material);
-        itemStack.setAmount(section.getInt("amount", 1));
+        ItemStack itemStack = new ItemStack(material, section.getInt("amount", 1), (short) section.getInt("data", 0));
 
         itemStack = MobDrops.getPlugin().getNBTHandler()
                 .setItemNBT(itemStack, section.getString("nbt"), section.getCurrentPath());
