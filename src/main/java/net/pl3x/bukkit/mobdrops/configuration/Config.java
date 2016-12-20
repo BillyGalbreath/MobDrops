@@ -7,10 +7,8 @@ import net.pl3x.bukkit.mobdrops.MobDrops;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +20,7 @@ public class Config {
     public static boolean COLOR_LOGS = true;
     public static boolean DEBUG_MODE = false;
     public static String LANGUAGE_FILE = "lang-en.yml";
-    public static Collection<Drop> DROPS = new HashSet<>();
+    public static final Collection<Drop> DROPS = new HashSet<>();
 
     public static void reload() {
         MobDrops plugin = MobDrops.getPlugin();
@@ -40,151 +38,163 @@ public class Config {
 
     private static void buildDrops(FileConfiguration config) {
         DROPS.clear(); // clear the old drops (prevents duplicates on reload)
+
         ConfigurationSection topSection = config.getConfigurationSection("drops");
-        drops:
         for (String sectionName : topSection.getKeys(false)) {
-            Logger.debug("Loading drop: " + sectionName);
-            ConfigurationSection dropSection = topSection.getConfigurationSection(sectionName);
+            try {
+                Logger.debug("Loading drop: " + sectionName);
+                ConfigurationSection dropSection = topSection.getConfigurationSection(sectionName);
 
-            ItemStack itemStack = ItemUtil.getItemStack(dropSection.getConfigurationSection("item"));
-            if (itemStack == null) {
-                Logger.error("Problem loading drop! Could not parse item: " + dropSection);
-                continue;
-            }
-
-            // check master chance
-            double masterChance = -1;
-            if (dropSection.isSet("chance")) {
-                try {
-                    masterChance = dropSection.getDouble("chance");
-                } catch (Exception e) {
-                    Logger.error("Problem loading drop! Invalid chance: " + dropSection);
+                ItemStack itemStack = ItemUtil.getItemStack(dropSection.getConfigurationSection("item"));
+                if (itemStack == null) {
+                    Logger.error("Problem loading drop! Could not parse item: " + dropSection);
                     continue;
                 }
-            }
 
-            // setup the valid drops
-            Collection<Drop> validDrops = new HashSet<>();
-
-            // cycle entities and populate drops to register
-            for (Map<?, ?> map : dropSection.getMapList("entities")) {
-                String entityName = map.get("type").toString().toUpperCase();
-
-                // check entity type
-                EntityType entityType;
-                try {
-                    entityType = EntityType.valueOf(entityName.toUpperCase());
-                } catch (Exception e) {
-                    Logger.error("Problem loading drop! Invalid entity type: " + dropSection + " -> " + entityName);
-                    continue drops;
-                }
-
-                // check entity variant
-                Object entityVariant = null;
-                Object setVariant = map.get("variant");
-                if (setVariant != null) {
-                    String variant;
+                // check master chance
+                double masterChance = -1;
+                if (dropSection.isSet("chance")) {
                     try {
-                        variant = setVariant.toString();
+                        masterChance = dropSection.getDouble("chance");
                     } catch (Exception e) {
-                        Logger.error("Problem loading drop! Invalid entity variant: " + dropSection + " -> " + entityName);
-                        continue drops;
-                    }
-
-                    if (variant != null && !variant.isEmpty()) {
-                        entityVariant = getVariant(entityType, variant);
-                    }
-
-                    if (entityVariant == null) {
-                        Logger.error("Problem loading drop! Invalid entity variant: " + dropSection + " -> " + entityName);
-                        continue drops;
+                        Logger.error("Problem loading drop! Invalid chance: " + dropSection);
+                        continue;
                     }
                 }
 
-                // has-ai
-                Boolean hasAI = null;
-                Object setHasAI = map.get("has-ai");
-                if (setHasAI != null) {
+                // check diminish time
+                int diminishTime = 0;
+                if (dropSection.isSet("diminishing-returns.time")) {
                     try {
-                        hasAI = Boolean.valueOf(setHasAI.toString());
+                        diminishTime = dropSection.getInt("diminishing-returns.time");
                     } catch (Exception e) {
-                        Logger.error("Problem loading drop! Invalid has-ai flag: " + dropSection + " -> " + entityName);
-                        continue drops;
+                        Logger.error("Problem loading drop! Invalid diminishing-returns.time: " + dropSection);
+                        continue;
                     }
                 }
 
-                // calculate chance
-                double chance = masterChance;
-                Object setChance = map.get("chance");
-                if (setChance != null) {
+                // check diminish increment
+                int diminishIncrement = 0;
+                if (dropSection.isSet("diminishing-returns.increment")) {
                     try {
-                        chance = Double.valueOf(setChance.toString());
+                        diminishIncrement = dropSection.getInt("diminishing-returns.increment");
                     } catch (Exception e) {
-                        Logger.error("Problem loading drop! Invalid chance: " + dropSection + " -> " + entityName);
-                        continue drops;
+                        Logger.error("Problem loading drop! Invalid diminishing-returns.increment: " + dropSection);
+                        continue;
                     }
                 }
 
-                // calculate minimum armor
-                int minArmor = 0;
-                Object setMinArmor = map.get("min-armor");
-                if (setMinArmor != null) {
+                // check diminish time
+                double diminishLoss = 0;
+                if (dropSection.isSet("diminishing-returns.loss")) {
                     try {
-                        minArmor = Integer.valueOf(setMinArmor.toString());
+                        diminishLoss = dropSection.getDouble("diminishing-returns.loss");
                     } catch (Exception e) {
-                        Logger.error("Problem loading drop! Invalid minimum armor: " + dropSection + " -> " + entityName);
-                        continue drops;
+                        Logger.error("Problem loading drop! Invalid diminishing-returns.loss: " + dropSection);
+                        continue;
                     }
                 }
 
-                // calculate maximum armor
-                int maxArmor = 20;
-                Object setMaxArmor = map.get("max-armor");
-                if (setMaxArmor != null) {
-                    try {
-                        maxArmor = Integer.valueOf(setMaxArmor.toString());
-                    } catch (Exception e) {
-                        Logger.error("Problem loading drop! Invalid maximum armor: " + dropSection + " -> " + entityName);
-                        continue drops;
+                // cycle entities and populate drops
+                for (Map<?, ?> map : dropSection.getMapList("entities")) {
+                    Drop drops = buildDrops(map, dropSection, masterChance, diminishTime, diminishIncrement, diminishLoss, itemStack);
+                    if (drops != null) {
+                        DROPS.add(drops);
                     }
                 }
-
-                // build the drop
-                Logger.debug("Registered drop: " + entityType + ", " + entityVariant + ", " + minArmor + ", " + maxArmor + ", " + chance + ", " + itemStack);
-                validDrops.add(new Drop(entityType, entityVariant, hasAI, minArmor, maxArmor, chance, itemStack));
-            }
-
-            // finally register the valid drops
-            if (!validDrops.isEmpty()) {
-                DROPS.addAll(validDrops);
+            } catch (Exception ignore) {
             }
         }
     }
 
+    private static Drop buildDrops(Map<?, ?> map, ConfigurationSection dropSection, double chance, int diminishTime, int diminishIncrement, double diminishLoss, ItemStack itemStack) {
+        String entityName = map.get("type").toString().toUpperCase();
+
+        // check entity type
+        EntityType entityType;
+        try {
+            entityType = EntityType.valueOf(entityName.toUpperCase());
+        } catch (Exception e) {
+            Logger.error("Problem loading drop! Invalid entity type: " + dropSection + " -> " + entityName);
+            return null;
+        }
+
+        // check entity variant
+        Object entityVariant = null;
+        Object setVariant = map.get("variant");
+        if (setVariant != null) {
+            String variant;
+            try {
+                variant = setVariant.toString();
+            } catch (Exception e) {
+                Logger.error("Problem loading drop! Invalid entity variant: " + dropSection + " -> " + entityName);
+                return null;
+            }
+
+            if (variant != null && !variant.isEmpty()) {
+                entityVariant = getVariant(entityType, variant);
+            }
+
+            if (entityVariant == null) {
+                Logger.error("Problem loading drop! Invalid entity variant: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
+        // has-ai
+        Boolean hasAI = null;
+        Object setHasAI = map.get("has-ai");
+        if (setHasAI != null) {
+            try {
+                hasAI = Boolean.valueOf(setHasAI.toString());
+            } catch (Exception e) {
+                Logger.error("Problem loading drop! Invalid has-ai flag: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
+        // calculate chance
+        Object setChance = map.get("chance");
+        if (setChance != null) {
+            try {
+                chance = Double.valueOf(setChance.toString());
+            } catch (Exception e) {
+                Logger.error("Problem loading drop! Invalid chance: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
+        // calculate minimum armor
+        int minArmor = 0;
+        Object setMinArmor = map.get("min-armor");
+        if (setMinArmor != null) {
+            try {
+                minArmor = Integer.valueOf(setMinArmor.toString());
+            } catch (Exception e) {
+                Logger.error("Problem loading drop! Invalid minimum armor: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
+        // calculate maximum armor
+        int maxArmor = 20;
+        Object setMaxArmor = map.get("max-armor");
+        if (setMaxArmor != null) {
+            try {
+                maxArmor = Integer.valueOf(setMaxArmor.toString());
+            } catch (Exception e) {
+                Logger.error("Problem loading drop! Invalid maximum armor: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
+        // build the drop
+        Logger.debug("Registered drop: " + entityType + ", " + entityVariant + ", " + minArmor + ", " + maxArmor + ", " + chance + ", " + itemStack);
+        return new Drop(entityType, entityVariant, hasAI, minArmor, maxArmor, chance, diminishTime, diminishIncrement, diminishLoss, itemStack);
+    }
+
     private static Object getVariant(EntityType entityType, String variant) {
         switch (entityType) {
-            case GUARDIAN:
-                switch (variant) {
-                    case "NORMAL":
-                        return false;
-                    case "ELDER":
-                        return true;
-                }
-                return null;
-            case HORSE:
-                switch (variant) {
-                    case "DONKEY":
-                        return Horse.Variant.DONKEY;
-                    case "HORSE":
-                        return Horse.Variant.HORSE;
-                    case "MULE":
-                        return Horse.Variant.MULE;
-                    case "SKELETON_HORSE":
-                        return Horse.Variant.SKELETON_HORSE;
-                    case "UNDEAD_HORSE":
-                        return Horse.Variant.UNDEAD_HORSE;
-                }
-                return null;
             case OCELOT:
                 switch (variant) {
                     case "BLACK_CAT":
@@ -215,16 +225,6 @@ public class Config {
                         return Rabbit.Type.WHITE;
                 }
                 return null;
-            case SKELETON:
-                switch (variant) {
-                    case "NORMAL":
-                        return Skeleton.SkeletonType.NORMAL;
-                    case "STRAY":
-                        return Skeleton.SkeletonType.STRAY;
-                    case "WITHER":
-                        return Skeleton.SkeletonType.WITHER;
-                }
-                return null;
             case VILLAGER:
                 switch (variant) {
                     case "BLACKSMITH":
@@ -239,7 +239,7 @@ public class Config {
                         return Villager.Profession.PRIEST;
                 }
                 return null;
-            case ZOMBIE:
+            case ZOMBIE_VILLAGER:
                 switch (variant) {
                     case "BLACKSMITH":
                         return Villager.Profession.BLACKSMITH;

@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MobDrops extends JavaPlugin {
-    private NBT nbtHandler;
+    private final NBT nbtHandler;
 
     public MobDrops() {
         nbtHandler = new NBTHandler();

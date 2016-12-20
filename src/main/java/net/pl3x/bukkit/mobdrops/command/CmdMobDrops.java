@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CmdMobDrops implements TabExecutor {
-    private MobDrops plugin;
+    private final MobDrops plugin;
 
     public CmdMobDrops(MobDrops plugin) {
         this.plugin = plugin;
