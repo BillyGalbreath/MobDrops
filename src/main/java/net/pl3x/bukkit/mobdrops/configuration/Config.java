@@ -188,9 +188,21 @@ public class Config {
             }
         }
 
+        // clear all normal drops
+        boolean clearDrops = false;
+        Object setClearDrops = map.get("clear-drops");
+        if (setClearDrops != null) {
+            try {
+                clearDrops = Boolean.valueOf(setClearDrops.toString());
+            } catch (Exception e) {
+                Logger.error("Problem loading drop! Invalid clear-drops: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
         // build the drop
         Logger.debug("Registered drop: " + entityType + ", " + entityVariant + ", " + minArmor + ", " + maxArmor + ", " + chance + ", " + itemStack);
-        return new Drop(entityType, entityVariant, hasAI, minArmor, maxArmor, chance, diminishTime, diminishIncrement, diminishLoss, itemStack);
+        return new Drop(entityType, entityVariant, hasAI, minArmor, maxArmor, chance, diminishTime, diminishIncrement, diminishLoss, itemStack, clearDrops);
     }
 
     private static Object getVariant(EntityType entityType, String variant) {

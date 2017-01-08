@@ -50,6 +50,7 @@ public class EntityListener implements Listener {
         Object entityVariant = getVariant(entity);
         int armor = getArmorValue(entity);
 
+        boolean clearDrops = false;
         Set<ItemStack> drops = new HashSet<>();
         Map<Drop, List<Long>> diminishedMap = diminishedReturns.containsKey(player.getUniqueId()) ? diminishedReturns.get(player.getUniqueId()) : new HashMap<>();
 
@@ -81,6 +82,10 @@ public class EntityListener implements Listener {
             if (armor > drop.getMaxArmor()) {
                 Logger.debug("Armor too high: " + armor + " > " + drop.getMaxArmor());
                 continue;
+            }
+
+            if (drop.isClearAllDrops()) {
+                clearDrops = true;
             }
 
             // chance and times
@@ -125,6 +130,11 @@ public class EntityListener implements Listener {
                 diminishedMap.put(drop, times);
             }
             drops.add(drop.getItemStack().clone());
+        }
+
+        if (clearDrops) {
+            Logger.debug("Cleared drops");
+            event.getDrops().clear();
         }
 
         // update diminishedReturns count

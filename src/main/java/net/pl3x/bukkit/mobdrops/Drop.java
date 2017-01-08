@@ -14,8 +14,9 @@ public class Drop {
     private final int diminishIncrement;
     private final double diminishLoss;
     private final ItemStack itemStack;
+    private final boolean clearAllDrops;
 
-    public Drop(EntityType entityType, Object entityVariant, Boolean hasAI, int minArmor, int maxArmor, double chance, int diminishTime, int diminishIncrement, double diminishLoss, ItemStack itemStack) {
+    public Drop(EntityType entityType, Object entityVariant, Boolean hasAI, int minArmor, int maxArmor, double chance, int diminishTime, int diminishIncrement, double diminishLoss, ItemStack itemStack, boolean clearAllDrops) {
         this.entityType = entityType;
         this.entityVariant = entityVariant;
         this.hasAI = hasAI;
@@ -26,6 +27,7 @@ public class Drop {
         this.diminishIncrement = diminishIncrement;
         this.diminishLoss = diminishLoss / 100D; // convert to percent
         this.itemStack = itemStack;
+        this.clearAllDrops = clearAllDrops;
     }
 
     public EntityType getEntityType() {
@@ -66,5 +68,9 @@ public class Drop {
 
     public ItemStack getItemStack() {
         return itemStack;
+    }
+
+    public boolean isClearAllDrops() {
+        return clearAllDrops;
     }
 }
