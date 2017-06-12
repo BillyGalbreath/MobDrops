@@ -2,7 +2,6 @@ package net.pl3x.bukkit.mobdrops.listener;
 
 import net.pl3x.bukkit.mobdrops.Drop;
 import net.pl3x.bukkit.mobdrops.Logger;
-import net.pl3x.bukkit.mobdrops.MobDrops;
 import net.pl3x.bukkit.mobdrops.configuration.Config;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
@@ -68,7 +67,7 @@ public class EntityListener implements Listener {
             }
 
             // check AI
-            boolean hasAI = MobDrops.getPlugin().getNBTHandler().hasAI(entity);
+            boolean hasAI = entity.hasAI();
             if (drop.hasAI() != null && drop.hasAI() != hasAI) {
                 Logger.debug("Entity hasAI mismatch: " + drop.hasAI() + " != " + hasAI);
                 continue;
