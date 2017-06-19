@@ -45,6 +45,11 @@ public class EntityListener implements Listener {
             return; // entity was not killed by player
         }
 
+        // check from spawner
+        if (entity.fromMobSpawner()) {
+            return; // mob came from spawner cage
+        }
+
         Player player = entity.getKiller();
         Object entityVariant = getVariant(entity);
         int armor = getArmorValue(entity);
