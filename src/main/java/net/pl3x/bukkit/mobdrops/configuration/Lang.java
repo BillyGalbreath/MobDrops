@@ -1,43 +1,86 @@
 package net.pl3x.bukkit.mobdrops.configuration;
 
-import net.pl3x.bukkit.mobdrops.MobDrops;
+import com.google.common.base.Throwables;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class Lang {
     public static String COMMAND_NO_PERMISSION = "&4You do not have permission for that command!";
-    public static String VERSION = "&d{plugin} v{version}.";
-    public static String RELOAD = "&d{plugin} v{version} reloaded.";
 
-    public static void reload() {
-        MobDrops plugin = MobDrops.getPlugin();
-        String langFile = Config.LANGUAGE_FILE;
-        File configFile = new File(plugin.getDataFolder(), langFile);
-        if (!configFile.exists()) {
-            plugin.saveResource(Config.LANGUAGE_FILE, false);
-        }
-        FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-
-        COMMAND_NO_PERMISSION = config.getString("command-no-permission", "&4You do not have permission for that command!");
-        VERSION = config.getString("version", "&d{plugin} v{version}.");
-        RELOAD = config.getString("reload", "&d{plugin} v{version} reloaded.");
+    private static void init() {
+        COMMAND_NO_PERMISSION = getString("command-no-permission", COMMAND_NO_PERMISSION);
     }
 
-    public static void send(CommandSender recipient, String message) {
-        if (message == null) {
-            return; // do not send blank messages
-        }
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        if (ChatColor.stripColor(message).isEmpty()) {
-            return; // do not send blank messages
-        }
+// ############################  DO NOT EDIT BELOW THIS LINE  ############################
 
-        for (String part : message.split("\n")) {
-            recipient.sendMessage(part);
+    /**
+     * Reload the language file
+     */
+    public static void reload(Plugin plugin) {
+        File configFile = new File(plugin.getDataFolder(), Config.LANGUAGE_FILE);
+        config = new YamlConfiguration();
+        try {
+            config.load(configFile);
+        } catch (IOException ignore) {
+        } catch (InvalidConfigurationException ex) {
+            Bukkit.getLogger().log(Level.SEVERE, "Could not load " + Config.LANGUAGE_FILE + ", please correct your syntax errors", ex);
+            throw Throwables.propagate(ex);
         }
+        config.options().header("This is the main language file for " + plugin);
+        config.options().copyDefaults(true);
+
+        Lang.init();
+
+        try {
+            config.save(configFile);
+        } catch (IOException ex) {
+            Bukkit.getLogger().log(Level.SEVERE, "Could not save " + configFile, ex);
+        }
+    }
+
+    private static YamlConfiguration config;
+
+    private static String getString(String path, String def) {
+        config.addDefault(path, def);
+        return config.getString(path, config.getString(path));
+    }
+
+    /**
+     * Sends a message to a recipient
+     *
+     * @param recipient Recipient of message
+     * @param message   Message to send
+     */
+    public static void send(CommandSender recipient, String message) {
+        if (recipient != null) {
+            for (String part : colorize(message).split("\n")) {
+                recipient.sendMessage(part);
+            }
+        }
+    }
+
+    /**
+     * Colorize a String
+     *
+     * @param str String to colorize
+     * @return Colorized String
+     */
+    public static String colorize(String str) {
+        if (str == null) {
+            return "";
+        }
+        str = ChatColor.translateAlternateColorCodes('&', str);
+        if (ChatColor.stripColor(str).isEmpty()) {
+            return "";
+        }
+        return str;
     }
 }

@@ -1,17 +1,16 @@
-name: ${project.artifactId}
-main: ${project.groupId}.${project.artifactId}
-version: ${project.version}
-description: ${project.artifactId} Bukkit Plugin
-author: BillyGalbreath
-softdepend:
-- EntityData
+name: "${project.artifactId}"
+main: "${project.groupId}.${project.artifactId}"
+version: "${project.version}"
+description: "${project.artifactId} Bukkit Plugin"
+author: "BillyGalbreath"
+api-version: "1.13"
 
 commands:
-    mobdrops:
-        description: Reload configs
-        usage: /<command> (reload)
+  mobdrops:
+    description: Reload configs
+    usage: /<command> (reload)
 
 permissions:
-    command.moddrops:
-        description: Allows to reload configs
-        default: op
+  command.moddrops:
+    description: Allows to reload configs
+    default: op

@@ -1,6 +1,5 @@
 package net.pl3x.bukkit.mobdrops.command;
 
-import net.pl3x.bukkit.mobdrops.Logger;
 import net.pl3x.bukkit.mobdrops.MobDrops;
 import net.pl3x.bukkit.mobdrops.configuration.Config;
 import net.pl3x.bukkit.mobdrops.configuration.Lang;
@@ -20,7 +19,7 @@ public class CmdMobDrops implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 1 && "reload".startsWith(args[0].toLowerCase())) {
+        if (args.length == 1 && "reload".startsWith(args[0].toLowerCase()) && sender.hasPermission("command.mobdrops")) {
             return Collections.singletonList("reload");
         }
         return null;
@@ -33,22 +32,16 @@ public class CmdMobDrops implements TabExecutor {
             return true;
         }
 
+        String response = "&d" + plugin.getName() + " v" + plugin.getDescription().getVersion();
+
         if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
-            Logger.debug("Reloading config...");
-            Config.reload();
+            Config.reload(plugin);
+            Lang.reload(plugin);
 
-            Logger.debug("Reloading language file...");
-            Lang.reload();
-
-            Lang.send(sender, Lang.RELOAD
-                    .replace("{plugin}", plugin.getName())
-                    .replace("{version}", plugin.getDescription().getVersion()));
-            return true;
+            response += " reloaded";
         }
 
-        Lang.send(sender, Lang.VERSION
-                .replace("{version}", plugin.getDescription().getVersion())
-                .replace("{plugin}", plugin.getName()));
+        Lang.send(sender, response);
         return true;
     }
 }
