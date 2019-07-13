@@ -8,9 +8,10 @@ api-version: "1.13"
 commands:
   mobdrops:
     description: Reload configs
+    permission: command.mobdrops
     usage: /<command> (reload)
 
 permissions:
-  command.moddrops:
+  command.mobdrops:
     description: Allows to reload configs
     default: op
