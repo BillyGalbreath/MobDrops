@@ -1,11 +1,11 @@
 package net.pl3x.bukkit.mobdrops;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.v1_14_R1.MojangsonParser;
+import net.minecraft.server.v1_15_R1.MojangsonParser;
 import net.pl3x.bukkit.mobdrops.configuration.Lang;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.craftbukkit.v1_14_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -17,7 +17,7 @@ public class ItemUtil {
             return bukkitItem; // nothing to parse
         }
 
-        net.minecraft.server.v1_14_R1.ItemStack nmsItem = CraftItemStack.asNMSCopy(bukkitItem);
+        net.minecraft.server.v1_15_R1.ItemStack nmsItem = CraftItemStack.asNMSCopy(bukkitItem);
         try {
             nmsItem.setTag(MojangsonParser.parse(nbt));
         } catch (CommandSyntaxException e) {
