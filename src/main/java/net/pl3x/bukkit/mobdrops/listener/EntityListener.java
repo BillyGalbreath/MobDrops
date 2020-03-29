@@ -2,8 +2,11 @@ package net.pl3x.bukkit.mobdrops.listener;
 
 import net.pl3x.bukkit.mobdrops.Drop;
 import net.pl3x.bukkit.mobdrops.configuration.Config;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -58,6 +61,25 @@ public class EntityListener implements Listener {
             if (drop.getEntityType() != entity.getType()) {
                 // silent
                 continue;
+            }
+
+            // check villager type and profession
+            if (entity.getType() == EntityType.VILLAGER) {
+                Villager villager = (Villager) entity;
+                if (drop.getVillagerType() != null && villager.getVillagerType() != drop.getVillagerType()) {
+                    continue;
+                }
+                if (drop.getVillagerProfession() != null && villager.getProfession() != drop.getVillagerProfession()) {
+                    continue;
+                }
+            }
+
+            // check cat type and color color
+            if (entity.getType() == EntityType.CAT) {
+                Cat cat = (Cat) entity;
+                if (drop.getCatType() != null && cat.getCatType() != drop.getCatType()) {
+                    continue;
+                }
             }
 
             // check AI

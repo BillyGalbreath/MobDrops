@@ -6,7 +6,9 @@ import net.pl3x.bukkit.mobdrops.ItemUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -135,7 +137,8 @@ public class Config {
                         DROPS.add(drops);
                     }
                 }
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -211,7 +214,39 @@ public class Config {
             }
         }
 
-        return new Drop(entityType, hasAI, minArmor, maxArmor, chance, diminishTime, diminishIncrement, diminishLoss, itemStack, clearDrops);
+        Drop drop = new Drop(entityType, hasAI, minArmor, maxArmor, chance, diminishTime, diminishIncrement, diminishLoss, itemStack, clearDrops);
+
+        Object villagerType = map.get("villager-type");
+        if (villagerType != null) {
+            try {
+                drop.setVillagerType(Villager.Type.valueOf(villagerType.toString()));
+            } catch (Exception e) {
+                error(plugin, "Problem loading drop! Invalid villager-type flag: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
+        Object villagerProfession = map.get("villager-profession");
+        if (villagerProfession != null) {
+            try {
+                drop.setVillagerProfession(Villager.Profession.valueOf(villagerProfession.toString()));
+            } catch (Exception e) {
+                error(plugin, "Problem loading drop! Invalid villager-profession flag: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
+        Object catType = map.get("cat-type");
+        if (catType != null) {
+            try {
+                drop.setCatType(Cat.Type.valueOf(catType.toString()));
+            } catch (Exception e) {
+                error(plugin, "Problem loading drop! Invalid cat-type flag: " + dropSection + " -> " + entityName);
+                return null;
+            }
+        }
+
+        return drop;
     }
 
     private static void error(Plugin plugin, String error) {

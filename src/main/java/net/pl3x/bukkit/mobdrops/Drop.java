@@ -1,6 +1,8 @@
 package net.pl3x.bukkit.mobdrops;
 
+import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
 public class Drop {
@@ -14,6 +16,9 @@ public class Drop {
     private final double diminishLoss;
     private final ItemStack itemStack;
     private final boolean clearAllDrops;
+    private Villager.Profession villagerProfession;
+    private Villager.Type villagerType;
+    private Cat.Type catType;
 
     public Drop(EntityType entityType, Boolean hasAI, int minArmor, int maxArmor, double chance, int diminishTime, int diminishIncrement, double diminishLoss, ItemStack itemStack, boolean clearAllDrops) {
         this.entityType = entityType;
@@ -66,5 +71,29 @@ public class Drop {
 
     public boolean isClearAllDrops() {
         return clearAllDrops;
+    }
+
+    public Villager.Profession getVillagerProfession() {
+        return villagerProfession;
+    }
+
+    public void setVillagerProfession(Villager.Profession villagerProfession) {
+        this.villagerProfession = villagerProfession;
+    }
+
+    public Villager.Type getVillagerType() {
+        return villagerType;
+    }
+
+    public void setVillagerType(Villager.Type villagerType) {
+        this.villagerType = villagerType;
+    }
+
+    public Cat.Type getCatType() {
+        return catType;
+    }
+
+    public void setCatType(Cat.Type catType) {
+        this.catType = catType;
     }
 }

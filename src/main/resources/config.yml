@@ -2,7 +2,7 @@ language-file: "lang-en.yml"
 
 drops:
   sword-of-the-gods:
-    chance: 0.001
+    chance: 0.001 # 0.1% chance
     diminishing-returns:
       time: 3600
       increment: 1
@@ -23,9 +23,9 @@ drops:
         max-armor: 10
       - type: CREEPER
       - type: ENDER_DRAGON
-        chance: 10.0
+        chance: 0.1 # 10% chance
   iron-ingots:
-    chance: 10.0
+    chance: 0.1 # 10% chance
     amount: 16
     item:
       material: IRON_INGOT
@@ -35,7 +35,7 @@ drops:
         chance: 20.0
       - type: SKELETON
   healing-potion:
-    chance: 5.0
+    chance: 0.05 # 5% chance
     amount: 2
     diminishing-returns:
       time: 300
@@ -47,8 +47,8 @@ drops:
     entities:
       - type: ZOMBIE
       - type: CREEPER
-        chance: 10.0
+        chance: 0.1 # 10% chance
       - type: SKELETON
-        chance: 15.0
+        chance: 0.15 # 15% chance
       - type: CAVE_SPIDER
       - type: SPIDER
