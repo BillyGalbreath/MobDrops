@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.pl3x.bukkit.mobdrops</groupId>
     <artifactId>MobDrops</artifactId>
-    <version>1.0</version>
+    <version>1.16.4</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>net.pl3x.purpur</groupId>
             <artifactId>purpur</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>1.16.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -25,7 +25,7 @@
         </repository>
     </repositories>
     <build>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <defaultGoal>clean package install</defaultGoal>
         <plugins>
             <plugin>
